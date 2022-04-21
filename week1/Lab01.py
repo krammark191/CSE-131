@@ -44,12 +44,25 @@ def save_board(filename, board):
 
 def display_board(board):
     '''Display a Tic-Tac-Toe board on the screen in a user-friendly way.'''
-    # Put display code here.
+    print(f" {board[0]} | {board[1]} | {board[2]} ")
+    print("---+---+---")
+    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print("---+---+---")
+    print(f" {board[6]} | {board[7]} | {board[8]} \n")
 
 def is_x_turn(board):
     '''Determine whose turn it is.'''
-    # Put code here determining if it is X's turn.
-    return True
+    sum1 = 0
+    sum2 = 0
+    for i in board:
+        if i == X:
+            sum1 += 1
+        elif i == O:
+            sum2 += 1
+    
+    if sum1 == sum2 or sum1 == 0:
+        return True
+    return False
 
 def play_game(board):
     '''Play the game of Tic-Tac-Toe.'''
