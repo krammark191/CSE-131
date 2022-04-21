@@ -66,7 +66,22 @@ def is_x_turn(board):
 
 def play_game(board):
     '''Play the game of Tic-Tac-Toe.'''
-    # Put game play code here. Return False when the user has indicated they are done.
+    while True:
+        if is_x_turn(board):
+            user_in = input("X> ")
+            if user_in == 'q':
+                return True
+            if board[int(user_in - 1)] == BLANK:
+                board[int(user_in - 1)] = X
+                break
+        else:
+            user_in = input("O> ")
+            if user_in == 'q':
+                return True
+            if board[int(user_in - 1)] == BLANK:
+                board[int(user_in - 1)] = O
+                break
+        print("That space is already filled, please try another square.")
     return False
 
 def game_done(board, message=False):
@@ -110,14 +125,32 @@ def game_done(board, message=False):
 
     return False
 
-# These user-instructions are provided and do not need to be changed.
-print("Enter 'q' to suspend your game. Otherwise, enter a number from 1 to 9")
-print("where the following numbers correspond to the locations on the grid:")
-print(" 1 | 2 | 3 ")
-print("---+---+---")
-print(" 4 | 5 | 6 ")
-print("---+---+---")
-print(" 7 | 8 | 9 \n")
-print("The current board is:")
+
+def welcome():
+    # These user-instructions are provided and do not need to be changed.
+    print("\nEnter 'q' to suspend your game. Otherwise, enter a number from 1 to 9")
+    print("where the following numbers correspond to the locations on the grid:")
+    print(" 1 | 2 | 3 ")
+    print("---+---+---")
+    print(" 4 | 5 | 6 ")
+    print("---+---+---")
+    print(" 7 | 8 | 9 \n")
+    print("The current board is:")
 
 # The file read code, game loop code, and file close code goes here.
+play_again = True
+while play_again:
+    answer = input("\nWould you like to play a new game or load a previous game? (new/load): ")
+    if answer.lower() == 'new':
+        board = blank_board["board"]
+    else:
+        board = read_board(input("What is the file name? "))
+    welcome()
+    while game_done:
+        display_board(board)
+        if play_game(board):
+            filename = input("What is the file name? ")
+            break
+    
+    play_again = True if input("Would you like to play again? ").lower() == 'yes' else False
+print("Thank you for playing!")
