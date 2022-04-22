@@ -5,9 +5,13 @@
 # 3. Assignment Description:
 #      Play the game of Tic-Tac-Toe
 # 4. What was the hardest part? Be as specific as possible.
-#      -a paragraph or two about how the assignment went for you-
+#      This assignment went fairly well, getting the tic tac toe part
+#      of the problem was fairly easy, I just had trouble getting the
+#      save and reload functions to work, but after getting help from
+#      Ben (thanks Ben!!) I got it to work as intended.
 # 5. How long did it take for you to complete the assignment?
-#      -total time in hours including reading the assignment and submitting the program-
+#      This lab took me about 2 hours to complete, a bit longer than I
+#      would have liked, but oh well.
 
 import json
 
@@ -30,17 +34,17 @@ blank_board = {
 def read_board(filename):
     '''Read the previously existing board from the file if it exists.'''
     try:
-        f = open(filename)
+        with open(filename) as f:
+            data = json.load(f)
+            return data
     except:
         print("File does not exist. You get a blank board.")
         return blank_board['board']
-    data = json.load(f)
-    return data['board']
 
 def save_board(filename, board):
     '''Save the current game to a file.'''
-    with open(filename, "w") as outfile:
-        json.dump(board, outfile)
+    with open(filename, 'w') as f:
+        json.dump(board, f)
 
 def display_board(board):
     '''Display a Tic-Tac-Toe board on the screen in a user-friendly way.'''
@@ -71,20 +75,20 @@ def play_game(board):
             user_in = input("X> ")
             if user_in == 'q':
                 return True
-            if board[int(user_in - 1)] == BLANK:
-                board[int(user_in - 1)] = X
+            if board[int(user_in) - 1] == BLANK:
+                board[int(user_in) - 1] = X
                 break
         else:
             user_in = input("O> ")
             if user_in == 'q':
                 return True
-            if board[int(user_in - 1)] == BLANK:
-                board[int(user_in - 1)] = O
+            if board[int(user_in) - 1] == BLANK:
+                board[int(user_in) - 1] = O
                 break
         print("That space is already filled, please try another square.")
     return False
 
-def game_done(board, message=False):
+def game_done(board, message=True):
     '''Determine if the game is finished.
        Note that this function is provided as-is.
        You do not need to edit it in any way.
@@ -138,19 +142,16 @@ def welcome():
     print("The current board is:")
 
 # The file read code, game loop code, and file close code goes here.
-play_again = True
-while play_again:
-    answer = input("\nWould you like to play a new game or load a previous game? (new/load): ")
-    if answer.lower() == 'new':
-        board = blank_board["board"]
-    else:
-        board = read_board(input("What is the file name? "))
-    welcome()
-    while game_done:
-        display_board(board)
-        if play_game(board):
-            filename = input("What is the file name? ")
-            break
-    
-    play_again = True if input("Would you like to play again? ").lower() == 'yes' else False
+answer = input("\nWould you like to play a new game or load a previous game? (new/load): ")
+if answer.lower() == 'new':
+    board = blank_board["board"]
+else:
+    board = read_board(input("What is the file name? "))
+welcome()
+while not game_done(board):
+    display_board(board)
+    if play_game(board):
+        filename = input("What is the file name? ")
+        save_board(filename, board) 
+        break
 print("Thank you for playing!")
