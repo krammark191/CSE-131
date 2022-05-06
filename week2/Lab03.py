@@ -77,7 +77,7 @@ while 1 > month or month > 12:
 year = -1
 while 1753 > year:
     try:
-        year = int(input("Enter the month number: "))
+        year = int(input("Enter the year number: "))
         if 1753 > year:
             print("Please enter a year after 1753.")
     except:
