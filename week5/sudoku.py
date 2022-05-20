@@ -1,3 +1,21 @@
+# 1. Name:
+#      Mark Van Horn
+# 2. Assignment Name:
+#      Lab 05 : Sudoku Draft
+# 3. Assignment Description:
+#      This program is a sudoku puzzle game.
+# 4. What was the hardest part? Be as specific as possible.
+#      The hardest part was getting the coordinates to cooperate, I had to convert
+#      the string input from the user into a string array to for error-handling,
+#      then I had to convert the string array back into a string to print for the
+#      user, then I had to convert the string array into an integer array for the
+#      integer coordinates for the nested board array. I know all of this is not
+#      entirely necessary, but I wanted to do it anyway, also it leaves me less work
+#      for next week.
+# 5. How long did it take for you to complete the assignment?
+#      About 3 hours.
+
+
 import json
 import time
 
