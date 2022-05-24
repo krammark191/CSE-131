@@ -39,13 +39,7 @@ def get_file():
     try:
         with open(file_name) as f:
             board = json.load(f)
-            print(f"\nLoading board from {file_name}", end="")
-            time.sleep(0.5)
-            print(".", end="")
-            time.sleep(0.5)
-            print(".", end="")
-            time.sleep(0.5)
-            print(".")
+            print(f"\nLoading board from {file_name}")
             time.sleep(1)
             print("Board loaded successfully.\n")
             return board['board']
@@ -57,9 +51,8 @@ def get_file():
 
 def save_file(board):
     file_name = input("Please enter a file name: ")
-    board_dict = {"board":board}
     with open(file_name, 'w') as f:
-        json.dump(board_dict, f)
+        json.dump({"board":board}, f)
     exit()
 
 def get_input():
@@ -86,51 +79,6 @@ def sort_coords(coords):
         coords[1] = temp
     return coords
 
-def edit_square(board, type):
-    print("Please enter the coordinates of the square.")
-    coords = list(input("> ").lower())
-    while not len(coords) == 2:
-        print("Coordinates must consist of one letter and one number.")
-        coords = list(input("> ").lower())
-    coords = sort_coords(coords)
-    while coords[0].isalpha() and coords[1].isalpha() or not coords[0].isalpha() and not coords[1].isalpha():
-        print("Invalid coordinates, must contain at least one letter and one number.")
-        coords = list(input("> ").lower())
-        while not len(coords) == 2:
-            print("Coordinates must consist of one letter and one number.")
-            coords = list(input("> ").lower())
-        coords = sort_coords(coords)
-    while ord(coords[0]) < 97 or ord(coords[0]) > 104 or ord(coords[1]) < 49 or ord(coords[1]) > 57:
-        print("Coordinates are out of range, please enter valid coordinates.")
-        coords = list(input("> ").lower())
-        while not len(coords) == 2:
-            print("Coordinates must consist of one letter and one number.")
-            coords = list(input("> ").lower())
-        coords = sort_coords(coords)
-    if not board[ord(coords[1]) - 49][ord(coords[0]) - 97] == 0:
-        print(f"There is already a value in \'{''.join(coords).upper()}\', please choose another square.")
-        edit_square(board, type) # Problem here, recursion not working as intended.
-    if type == 2:
-        return coords
-    print(f"Enter the new value for square {''.join(coords).upper()}")
-    new_value = int(input("> "))
-    while new_value < 1 or new_value > 9:
-        print("Value entered is out of range, please pick a number between 1 and 9.")
-        new_value = int(input("> "))
-    while not check_valid(board, coords, new_value) == 0:
-        match check_valid(board, coords, new_value):
-            case 1:
-                print(f"{new_value} is already in the column.")
-            case 2:
-                print(f"{new_value} is already in the row.")
-            case 3:
-                print(f"{new_value} is already in the square.")
-        new_value = int(input("> "))
-
-    board[ord(coords[1]) - 49][ord(coords[0]) - 97] = new_value
-
-    return board
-
 def check_valid(board, coords, value):
     column = ord(coords[0]) - 97
     row = ord(coords[1]) - 49
@@ -151,19 +99,117 @@ def check_valid(board, coords, value):
 
     return 0
 
-def get_options(board):
-    coords = edit_square(board, 2)
-    while not board[ord(coords[1]) - 49][ord(coords[0]) - 97] == 0:
+def is_filled(board, coords):
+    return False if board[ord(coords[1]) - 49][ord(coords[0]) - 97] == 0 else True
+
+def check_coord_errors(board, coords):
+    if not len(coords) == 2:
+        print("Coordinates must consist of two characters; one letter and one number.")
+        return False
+    elif coords[0].isalpha() and coords[1].isalpha() or not coords[0].isalpha() and not coords[1].isalpha():
+        print("Invalid coordinates, must contain at least one letter and one number.")
+        return False
+    elif ord(coords[0]) < 97 or ord(coords[0]) > 104 or ord(coords[1]) < 49 or ord(coords[1]) > 57:
+        print("Coordinates are out of range, please enter valid coordinates.")
+        return False
+    elif is_filled(board, coords):
         print(f"There is already a value in \'{''.join(coords).upper()}\', please choose another square.")
-        coords = edit_square(board, 2)
+        return False
+    else:
+        return True
+
+def check_value_errors(board, coords, new_value):
+    if new_value < 1 or new_value > 9:
+        print("Value entered is out of range, please pick a number between 1 and 9.")
+        return False
+    match check_valid(board, coords, new_value):
+        case 0:
+            return True
+        case 1:
+            print(f"{new_value} is already in the column.")
+            return False
+        case 2:
+            print(f"{new_value} is already in the row.")
+            return False
+        case 3:
+            print(f"{new_value} is already in the square.")
+            return False
+    return True
+
+def get_coords(board):
+    coords = list(input("Please enter the coordinates of the square.\n> ").lower())
+    return coords if check_coord_errors(board, coords) else get_coords(board)
+
+def get_value(board, coords):
+    new_value = int(input(f"Enter the new value for square {''.join(coords).upper()}\n> "))
+    return new_value if check_value_errors(board, coords, new_value) else get_value(board, coords)
+
+def edit_square(board):
+    coords = get_coords(board)
+
+    # while not len(coords) == 2:
+    #     print("Coordinates must consist of one letter and one number.")
+    #     coords = list(input("> ").lower())
+    # coords = sort_coords(coords)
+
+    # while coords[0].isalpha() and coords[1].isalpha() or not coords[0].isalpha() and not coords[1].isalpha():
+    #     print("Invalid coordinates, must contain at least one letter and one number.")
+    #     coords = list(input("> ").lower())
+    #     while not len(coords) == 2:
+    #         print("Coordinates must consist of one letter and one number.")
+    #         coords = list(input("> ").lower())
+    #     coords = sort_coords(coords)
+
+    # while ord(coords[0]) < 97 or ord(coords[0]) > 104 or ord(coords[1]) < 49 or ord(coords[1]) > 57:
+    #     print("Coordinates are out of range, please enter valid coordinates.")
+    #     coords = list(input("> ").lower())
+    #     while not len(coords) == 2:
+    #         print("Coordinates must consist of one letter and one number.")
+    #         coords = list(input("> ").lower())
+    #     coords = sort_coords(coords)
+
+    # if is_filled(board, coords):
+    #     print(f"There is already a value in \'{''.join(coords).upper()}\', please choose another square.")
+    #     edit_square(board, type)
+
+    # Value input
+    # if type == 2:
+    #     return coords
+
+    new_value = get_value(board, coords)
+
+    # print(f"Enter the new value for square {''.join(coords).upper()}")
+    # new_value = int(input("> "))
+
+    # while new_value < 1 or new_value > 9:
+    #     print("Value entered is out of range, please pick a number between 1 and 9.")
+    #     new_value = int(input("> "))
+
+    # while not check_valid(board, coords, new_value) == 0:
+    #     match check_valid(board, coords, new_value):
+    #         case 1:
+    #             print(f"{new_value} is already in the column.")
+    #         case 2:
+    #             print(f"{new_value} is already in the row.")
+    #         case 3:
+    #             print(f"{new_value} is already in the square.")
+    #     new_value = int(input("> "))
+
+    board[ord(coords[1]) - 49][ord(coords[0]) - 97] = new_value
+
+    return board
+
+def get_options(board):
+    coords = get_coords(board)
+    # while is_filled(board, coords):
+    #     print(f"There is already a value in \'{''.join(coords).upper()}\', please choose another square.")
+    #     coords = get_coords()
     valid_options = []
     for i in range(1, 10):
         if check_valid(board, coords, i) == 0:
             valid_options.append(i)
-    print()
-    print(f"The valid options for \'{''.join(coords).upper()}\' are: ", end="")
-    print(*valid_options, sep=", ")
-    print()
+    print(f"\nThe valid options for \'{''.join(coords).upper()}\' are: ", end="")
+    print(*valid_options, sep=", ", end="\n\n")
     display_options()
     process_input(get_input(), board)
 
@@ -171,8 +217,7 @@ def display_options():
     print("Please choose one of the options below:")
     print("\'E\'\tChoose a square to edit")
     print("\'O\'\tChoose a square to get options")
-    print("\'Q\'\tSave and quit")
-    print()
+    print("\'Q\'\tSave and quit\n")
 
 def main():
     board = get_file()
