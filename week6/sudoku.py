@@ -88,7 +88,6 @@ def save_file(board):
 def get_input():
     user_choice = input("> ").lower()
     while user_choice not in {'d', 'e', 'o', 'q'}:
-        # not user_choice == 'e' and not user_choice == 'o' and not user_choice == 'q' and not user_choice == 'd':
         print("Incorrect input, please enter a valid choice.\n")
         display_options()
         user_choice = input("> ").lower()
@@ -222,8 +221,6 @@ def get_options(board):
     print(*valid_options, sep=", ", end="\n\n")
     board[ord(coords[1]) - 49][ord(coords[0]) - 97] = temp_value
     return board
-    # display_options()
-    # process_input(get_input(), board)
 
 
 def display_options():
